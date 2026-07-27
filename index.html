@@ -3,8 +3,8 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>PAFAN.DEV — Portfolio</title>
-  <meta name="description" content="Portfolio of Pafan — developer & maker of playful things." />
+  <title>PAFAN.DEV</title>
+  <meta name="description" content="developer for meowapps" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Schoolbell&display=swap" rel="stylesheet" />
@@ -41,8 +41,6 @@
     /* ---------- chalk-dust dots ---------- */
     .dot {
       position: absolute;
-      border-radius: 50%;
-      background: var(--chalk);
       opacity: 0.25;
       animation: floaty 6s ease-in-out infinite;
       pointer-events: none;
@@ -322,15 +320,66 @@
       .cards { gap: 0.8rem; }
       .card { width: clamp(90px, 24vw, 120px); height: clamp(90px, 24vw, 120px); }
     }
+
+    /* ---------- mobile layout ---------- */
+    @media (max-width: 600px) {
+      body {
+        justify-content: space-evenly;
+        gap: 0.5rem;
+      }
+
+      .tagline {
+        margin-top: 5rem;
+      }
+
+      /* name pinned on top like a header */
+      .site-name {
+        position: fixed;
+        top: max(3rem, env(safe-area-inset-top));
+        left: 50%;
+        transform: translateX(-50%) rotate(-2deg);
+        font-size: clamp(2.6rem, 13vw, 3.6rem);
+      }
+
+      .hero {
+        margin-top: clamp(3.5rem, 12vh, 5rem);
+      }
+
+      /* portrait back to center */
+      .blob {
+        transform: scale(1.2);
+        width: clamp(160px, 48vw, 230px);
+        height: clamp(160px, 48vw, 230px);
+      }
+
+      /* japan map moved way lower */
+      .japan {
+        position: fixed;
+        left: auto;
+        top: auto;
+        right: 0%;
+        top: 25%;
+        width: clamp(190px, 58vw, 260px);
+        transform: rotate(8deg);
+        opacity: 0.85;
+      }
+
+      /* label centered under the pin */
+      .tokyo-label {
+        left: 59%;
+        top: 63%;
+        transform: translateX(-50%) rotate(-5deg);
+      }
+    }
   </style>
 </head>
 <body>
   <!-- confetti dots -->
-  <span class="dot"></span>
-  <span class="dot"></span>
-  <span class="dot"></span>
-  <span class="dot"></span>
-  <span class="dot"></span>
+  <span class="dot">✦</span>
+  <span class="dot">✦</span>
+  <span class="dot">✦</span>
+  <span class="dot">✦</span>
+  <span class="dot">✦</span>
 
   <!-- name + blob portrait -->
   <header class="hero">
