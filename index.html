@@ -1,0 +1,383 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>PAFAN.DEV — Portfolio</title>
+  <meta name="description" content="Portfolio of Pafan — developer & maker of playful things." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Schoolbell&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --board: #262427;
+      --chalk: #f7f5ef;
+      --chalk-dim: rgba(247, 245, 239, 0.72);
+      --chalk-faint: rgba(247, 245, 239, 0.28);
+    }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    html, body {
+      height: 100%;
+      overflow: hidden;
+    }
+
+    body {
+      font-family: 'Schoolbell', cursive;
+      background-color: var(--board);
+      /* subtle chalk-dust grain */
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2'/%3E%3CfeColorMatrix values='0 0 0 0 1 0 0 0 0 1 0 0 0 0 1 0 0 0 0.05 0'/%3E%3C/filter%3E%3Crect width='200' height='200' filter='url(%23n)'/%3E%3C/svg%3E");
+      color: var(--chalk);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: clamp(1rem, 3vh, 2.5rem);
+      position: relative;
+      padding: 2vh 4vw;
+    }
+
+    /* ---------- chalk-dust dots ---------- */
+    .dot {
+      position: absolute;
+      border-radius: 50%;
+      background: var(--chalk);
+      opacity: 0.25;
+      animation: floaty 6s ease-in-out infinite;
+      pointer-events: none;
+    }
+    .dot:nth-child(1) { width: 18px; height: 18px; top: 12%; left: 12%; animation-delay: -1s; }
+    .dot:nth-child(2) { width: 12px; height: 12px; top: 20%; right: 15%; animation-delay: -3s; }
+    .dot:nth-child(3) { width: 22px; height: 22px; bottom: 18%; left: 8%;  animation-delay: -2s; }
+    .dot:nth-child(4) { width: 10px; height: 10px; bottom: 12%; right: 10%; animation-delay: -4s; }
+    .dot:nth-child(5) { width: 14px; height: 14px; top: 55%; right: 6%;  animation-delay: -5s; }
+
+    /* ---------- hero: name behind blob ---------- */
+    .hero {
+      position: relative;
+      display: grid;
+      place-items: center;
+      flex-shrink: 0;
+      /* compensate for the title overhanging above the blob */
+      margin-top: clamp(2.5rem, 9vh, 5rem);
+    }
+
+    .site-name {
+      position: absolute;
+      z-index: 1;
+      font-size: clamp(3rem, 11vw, 7.5rem);
+      letter-spacing: 0.06em;
+      color: var(--chalk);
+      white-space: nowrap;
+      transform: translateY(-100%) rotate(-2deg);
+      animation: floaty 7s ease-in-out infinite;
+      user-select: none;
+    }
+
+    .blob {
+      position: relative;
+      z-index: 3;
+      width: clamp(180px, 32vh, 300px);
+      height: clamp(180px, 32vh, 300px);
+      /* shifted left so portrait + map read as one centered group */
+      transform: translateX(calc(-1 * clamp(50px, 10vh, 90px)));
+      animation: floaty 5s ease-in-out infinite;
+    }
+
+    .blob::before {
+      /* offset back-blob for depth */
+      content: "";
+      position: absolute;
+      inset: 0;
+      background: var(--chalk-faint);
+      border-radius: 58% 42% 45% 55% / 48% 56% 44% 52%;
+      transform: translate(10px, 12px) rotate(6deg);
+      animation: morph 12s ease-in-out infinite alternate;
+    }
+
+    .blob-img {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      border-radius: 42% 58% 55% 45% / 52% 44% 56% 48%;
+      border: 4px solid var(--chalk);
+      animation: morph 12s ease-in-out infinite alternate;
+      background: var(--chalk-faint);
+    }
+
+    .badge {
+      position: absolute;
+      z-index: 4;
+      left: -6%;
+      bottom: -4%;
+      width: clamp(55px, 10vh, 90px);
+      transform: rotate(-8deg);
+      animation: floaty 5.5s ease-in-out infinite;
+      animation-delay: -1.5s;
+      cursor: help;
+    }
+
+    .badge img {
+      display: block;
+      width: 100%;
+      height: auto;
+      filter: drop-shadow(0 4px 6px rgba(0, 0, 0, 0.35));
+      transition: transform 0.2s ease;
+    }
+
+    .badge:hover img {
+      transform: scale(1.12) rotate(6deg);
+    }
+
+    .badge-tip {
+      position: absolute;
+      bottom: calc(100% + 14px);
+      left: 50%;
+      transform: translateX(-50%) rotate(-3deg) scale(0.6);
+      background: var(--chalk);
+      color: var(--board);
+      padding: 0.35rem 0.8rem;
+      border-radius: 14px;
+      font-size: clamp(0.85rem, 2vh, 1.05rem);
+      white-space: nowrap;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.2s ease, transform 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
+    }
+
+    /* bubble tail */
+    .badge-tip::after {
+      content: "";
+      position: absolute;
+      top: 100%;
+      left: 50%;
+      transform: translateX(-50%);
+      border: 7px solid transparent;
+      border-top-color: var(--chalk);
+    }
+
+    .badge:hover .badge-tip {
+      opacity: 1;
+      transform: translateX(-50%) rotate(-3deg) scale(1);
+    }
+
+    /* ---------- japan map: in front of the name, behind the portrait ---------- */
+    .japan {
+      position: absolute;
+      z-index: 2;
+      left: 50%;
+      top: 50%;
+      width: clamp(180px, 32vh, 300px);
+      transform: translate(-8%, -55%) rotate(6deg);
+      animation: floaty 6.5s ease-in-out infinite;
+      animation-delay: -2.5s;
+      pointer-events: none;
+    }
+
+    .japan img {
+      display: block;
+      width: 100%;
+      height: auto;
+      opacity: 0.99;
+    }
+
+    .tokyo-label {
+      position: absolute;
+      left: 70%;
+      top: 50%;
+      transform: rotate(-5deg);
+      color: #ff5a5a;
+      font-size: clamp(0.95rem, 2.2vh, 1.25rem);
+      white-space: nowrap;
+    }
+
+    @keyframes morph {
+      0%   { border-radius: 42% 58% 55% 45% / 52% 44% 56% 48%; }
+      50%  { border-radius: 55% 45% 42% 58% / 44% 55% 45% 56%; }
+      100% { border-radius: 48% 52% 58% 42% / 56% 48% 52% 44%; }
+    }
+
+    /* ---------- tagline ---------- */
+    .tagline {
+      font-size: clamp(1.05rem, 2.4vh, 1.4rem);
+      color: var(--chalk-dim);
+      transform: rotate(-1deg);
+      animation: floaty 8s ease-in-out infinite;
+      animation-delay: -2s;
+      text-align: center;
+    }
+
+    /* ---------- project blobs ---------- */
+    .cards {
+      display: flex;
+      gap: clamp(1rem, 4vw, 2.5rem);
+      flex-wrap: wrap;
+      justify-content: center;
+    }
+
+    .card {
+      position: relative;
+      width: clamp(120px, 18vh, 170px);
+      height: clamp(120px, 18vh, 170px);
+      display: block;
+      overflow: hidden;
+      border: 3px solid var(--chalk);
+      text-decoration: none;
+      color: var(--chalk);
+      animation: floaty 6s ease-in-out infinite;
+      transition: transform 0.25s ease;
+    }
+    .card:nth-child(1) { border-radius: 55% 45% 48% 52% / 46% 54% 46% 54%; transform: rotate(-2.5deg); animation-delay: -1s; }
+    .card:nth-child(2) { border-radius: 44% 56% 55% 45% / 55% 45% 55% 45%; transform: rotate(1.5deg);  animation-delay: -3.5s; }
+    .card:nth-child(3) { border-radius: 52% 48% 42% 58% / 48% 56% 44% 52%; transform: rotate(-1deg);   animation-delay: -5s; }
+
+    .card img {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      transition: transform 0.35s ease, filter 0.35s ease;
+    }
+
+    .card-label {
+      position: absolute;
+      inset: 0;
+      display: grid;
+      place-items: center;
+      text-align: center;
+      padding: 0.8rem;
+      background: rgba(20, 28, 24, 0.65);
+      opacity: 0;
+      transition: opacity 0.3s ease;
+    }
+
+    .card-label h3 {
+      font-size: clamp(1rem, 2.2vh, 1.3rem);
+      font-weight: 400;
+    }
+
+    .card:hover {
+      animation-play-state: paused;
+      transform: rotate(0deg) translateY(-8px) scale(1.06);
+    }
+
+    .card:hover img {
+      transform: scale(1.1);
+      filter: blur(1px);
+    }
+
+    .card:hover .card-label,
+    .card:focus-visible .card-label {
+      opacity: 1;
+    }
+
+    /* ---------- social links ---------- */
+    .socials {
+      display: flex;
+      gap: 1.2rem;
+      animation: floaty 7s ease-in-out infinite;
+      animation-delay: -4s;
+    }
+
+    .socials a {
+      display: grid;
+      place-items: center;
+      width: 44px;
+      height: 44px;
+      border: 3px solid var(--chalk);
+      border-radius: 50%;
+      background: transparent;
+      color: var(--chalk);
+      transition: transform 0.2s ease, background 0.2s ease, color 0.2s ease;
+    }
+
+    .socials a:hover {
+      transform: translateY(-4px) rotate(-6deg);
+      background: var(--chalk);
+      color: var(--board);
+    }
+
+    .socials svg {
+      width: 22px;
+      height: 22px;
+      fill: currentColor;
+    }
+
+    /* ---------- shared float animation ---------- */
+    @keyframes floaty {
+      0%, 100% { translate: 0 0; }
+      50%      { translate: 0 -10px; }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after { animation: none !important; }
+    }
+
+    /* keep everything on one screen on short/small viewports */
+    @media (max-height: 640px), (max-width: 600px) {
+      .cards { gap: 0.8rem; }
+      .card { width: clamp(90px, 24vw, 120px); height: clamp(90px, 24vw, 120px); }
+    }
+  </style>
+</head>
+<body>
+  <!-- confetti dots -->
+  <span class="dot"></span>
+  <span class="dot"></span>
+  <span class="dot"></span>
+  <span class="dot"></span>
+  <span class="dot"></span>
+
+  <!-- name + blob portrait -->
+  <header class="hero">
+    <h1 class="site-name">PAFAN.DEV</h1>
+    <!-- japan map -->
+    <div class="japan" aria-hidden="true">
+      <img src="img/japan_map.png" alt="" />
+      <span class="tokyo-label">Im in tokyo!</span>
+    </div>
+    <div class="blob">
+      <img class="blob-img" src="img/portrait.png" alt="Portrait of Pafan" />
+      <span class="badge">
+        <img src="img/emerald_badge.png" alt="Emerald badge" />
+        <span class="badge-tip">LET'S GO KC!</span>
+      </span>
+    </div>
+  </header>
+
+  <p class="tagline">my name is <strong>Val</strong> and I build games and apps ✦</p>
+
+  <!-- project blobs (placeholders) -->
+  <main class="cards">
+    <a class="card" href="https://store.steampowered.com/app/4022740/La_Pizza_Del_Gatto/">
+      <img src="img/lpdg.png" alt="La Pizza Del Gatto cover" />
+      <span class="card-label"><h3>La Pizza Del Gatto 🍕</h3></span>
+    </a>
+    <a class="card" href="https://meowapps.com/">
+      <img src="img/meowapps.png" alt="Best company in the world cover" />
+      <span class="card-label"><h3>Best company in the world 🩵</h3></span>
+    </a>
+    <a class="card" href="https://coguessr.pafan.dev/">
+      <img src="img/cg.png" alt="Geo Guessing Game for streamers cover" />
+      <span class="card-label"><h3>Geo Guessing Game for streamers 📍</h3></span>
+    </a>
+  </main>
+
+  <!-- social links -->
+  <footer class="socials">
+    <a href="https://github.com/valdesu" aria-label="GitHub" title="GitHub">
+      <svg viewBox="0 0 16 16" aria-hidden="true"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27s1.36.09 2 .27c1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.01 8.01 0 0 0 16 8c0-4.42-3.58-8-8-8Z"/></svg>
+    </a>
+    <a href="https://www.linkedin.com/in/valentin-wacheux/" aria-label="LinkedIn" title="LinkedIn">
+      <svg viewBox="0 0 16 16" aria-hidden="true"><path d="M12.68 0H1.32C.59 0 0 .58 0 1.29v11.42C0 13.42.59 14 1.32 14h11.36c.73 0 1.32-.58 1.32-1.29V1.29C14 .58 13.41 0 12.68 0ZM4.15 11.93H2.08V5.25h2.07v6.68ZM3.11 4.34a1.2 1.2 0 1 1 0-2.4 1.2 1.2 0 0 1 0 2.4Zm8.82 7.59h-2.07V8.68c0-.77-.01-1.77-1.08-1.77-1.08 0-1.24.84-1.24 1.71v3.31H5.47V5.25h1.99v.91h.03c.28-.52.95-1.08 1.96-1.08 2.1 0 2.48 1.38 2.48 3.17v3.68Z" transform="translate(1 1)"/></svg>
+    </a>
+    <a href="mailto:devteam@meowapps.com" aria-label="Email" title="Email">
+      <svg viewBox="0 0 16 16" aria-hidden="true"><path d="M0 4a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2V4Zm2-.5a.5.5 0 0 0-.5.5v.35L8 8.6l6.5-4.25V4a.5.5 0 0 0-.5-.5H2Zm12.5 2.57L8.41 9.87a.75.75 0 0 1-.82 0L1.5 6.07V12a.5.5 0 0 0 .5.5h12a.5.5 0 0 0 .5-.5V6.07Z"/></svg>
+    </a>
+  </footer>
+</body>
+</html>
