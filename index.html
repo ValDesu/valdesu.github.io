@@ -4,7 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>PAFAN.DEV</title>
-  <meta name="description" content="developer for meowapps" />
+  <meta name="description" content="Val — I build games and apps." />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Schoolbell&display=swap" rel="stylesheet" />
@@ -12,412 +12,291 @@
     :root {
       --board: #262427;
       --chalk: #f7f5ef;
-      --chalk-dim: rgba(247, 245, 239, 0.72);
-      --chalk-faint: rgba(247, 245, 239, 0.28);
+      --chalk-dim: rgba(247, 245, 239, 0.6);
+      --spring: cubic-bezier(0.34, 1.56, 0.64, 1);
     }
 
     * { margin: 0; padding: 0; box-sizing: border-box; }
 
-    html, body {
-      height: 100%;
-      overflow: hidden;
-    }
-
     body {
+      min-height: 100dvh;
       font-family: 'Schoolbell', cursive;
-      background-color: var(--board);
-      /* subtle chalk-dust grain */
-      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2'/%3E%3CfeColorMatrix values='0 0 0 0 1 0 0 0 0 1 0 0 0 0 1 0 0 0 0.05 0'/%3E%3C/filter%3E%3Crect width='200' height='200' filter='url(%23n)'/%3E%3C/svg%3E");
+      background: var(--board);
       color: var(--chalk);
       display: flex;
       flex-direction: column;
       align-items: center;
       justify-content: center;
-      gap: clamp(1rem, 3vh, 2.5rem);
+      gap: clamp(1.5rem, 4vh, 2.5rem);
+      padding: 3rem 1.5rem;
+      text-align: center;
+    }
+
+    /* staggered entrance */
+    body > * {
+      animation: rise 0.7s var(--spring) both;
+      animation-delay: calc(var(--i) * 0.1s);
+    }
+
+    /* ---------- intro ---------- */
+    .portrait {
       position: relative;
-      padding: 2vh 4vw;
+      width: clamp(140px, 24vh, 200px);
+      aspect-ratio: 1;
+      isolation: isolate;
     }
 
-    /* ---------- chalk-dust dots ---------- */
-    .dot {
-      position: absolute;
-      opacity: 0.25;
-      animation: floaty 6s ease-in-out infinite;
-      pointer-events: none;
-    }
-    .dot:nth-child(1) { width: 18px; height: 18px; top: 12%; left: 12%; animation-delay: -1s; }
-    .dot:nth-child(2) { width: 12px; height: 12px; top: 20%; right: 15%; animation-delay: -3s; }
-    .dot:nth-child(3) { width: 22px; height: 22px; bottom: 18%; left: 8%;  animation-delay: -2s; }
-    .dot:nth-child(4) { width: 10px; height: 10px; bottom: 12%; right: 10%; animation-delay: -4s; }
-    .dot:nth-child(5) { width: 14px; height: 14px; top: 55%; right: 6%;  animation-delay: -5s; }
-
-    /* ---------- hero: name behind blob ---------- */
-    .hero {
-      position: relative;
-      display: grid;
-      place-items: center;
-      flex-shrink: 0;
-      /* compensate for the title overhanging above the blob */
-      margin-top: clamp(2.5rem, 9vh, 5rem);
-    }
-
-    .site-name {
-      position: absolute;
-      z-index: 1;
-      font-size: clamp(3rem, 11vw, 7.5rem);
-      letter-spacing: 0.06em;
-      color: var(--chalk);
-      white-space: nowrap;
-      transform: translateY(-100%) rotate(-2deg);
-      animation: floaty 7s ease-in-out infinite;
-      user-select: none;
-    }
-
-    .blob {
-      position: relative;
-      z-index: 3;
-      width: clamp(180px, 32vh, 300px);
-      height: clamp(180px, 32vh, 300px);
-      /* shifted left so portrait + map read as one centered group */
-      transform: translateX(calc(-1 * clamp(50px, 10vh, 90px)));
-      animation: floaty 5s ease-in-out infinite;
-    }
-
-    .blob::before {
-      /* offset back-blob for depth */
+    /* loose chalk outline drifting around the portrait, out of sync with it */
+    .portrait::before {
       content: "";
       position: absolute;
-      inset: 0;
-      background: var(--chalk-faint);
-      border-radius: 58% 42% 45% 55% / 48% 56% 44% 52%;
-      transform: translate(10px, 12px) rotate(6deg);
-      animation: morph 12s ease-in-out infinite alternate;
+      inset: -10px;
+      z-index: -1;
+      border: 2px dashed var(--chalk-dim);
+      border-radius: 55% 45% 42% 58% / 44% 55% 45% 56%;
+      animation: morph 7s ease-in-out infinite alternate-reverse, spin 40s linear infinite;
+      transition: inset 0.4s var(--spring), border-color 0.3s;
     }
 
-    .blob-img {
-      position: absolute;
-      inset: 0;
+    .portrait:hover::before {
+      inset: -16px;
+      border-color: var(--chalk);
+    }
+
+    .portrait > img {
       width: 100%;
       height: 100%;
       object-fit: cover;
+      border: 3px solid var(--chalk);
       border-radius: 42% 58% 55% 45% / 52% 44% 56% 48%;
-      border: 4px solid var(--chalk);
-      animation: morph 12s ease-in-out infinite alternate;
-      background: var(--chalk-faint);
+      animation: morph 10s ease-in-out infinite alternate;
     }
 
     .badge {
       position: absolute;
-      z-index: 4;
-      left: -6%;
-      bottom: -4%;
-      width: clamp(55px, 10vh, 90px);
+      left: -10%;
+      bottom: -6%;
+      width: 34%;
       transform: rotate(-8deg);
-      animation: floaty 5.5s ease-in-out infinite;
-      animation-delay: -1.5s;
       cursor: help;
     }
 
     .badge img {
       display: block;
       width: 100%;
-      height: auto;
-      filter: drop-shadow(0 4px 6px rgba(0, 0, 0, 0.35));
-      transition: transform 0.2s ease;
+      transition: transform 0.3s var(--spring);
     }
 
-    .badge:hover img {
-      transform: scale(1.12) rotate(6deg);
-    }
+    .badge:hover img { transform: scale(1.15) rotate(8deg); }
 
     .badge-tip {
       position: absolute;
-      bottom: calc(100% + 14px);
+      bottom: calc(100% + 8px);
       left: 50%;
-      transform: translateX(-50%) rotate(-3deg) scale(0.6);
       background: var(--chalk);
       color: var(--board);
-      padding: 0.35rem 0.8rem;
-      border-radius: 14px;
-      font-size: clamp(0.85rem, 2vh, 1.05rem);
+      padding: 0.2rem 0.7rem;
+      border-radius: 12px;
       white-space: nowrap;
       opacity: 0;
+      transform: translateX(-50%) scale(0.6);
+      transition: opacity 0.2s, transform 0.3s var(--spring);
       pointer-events: none;
-      transition: opacity 0.2s ease, transform 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
-    }
-
-    /* bubble tail */
-    .badge-tip::after {
-      content: "";
-      position: absolute;
-      top: 100%;
-      left: 50%;
-      transform: translateX(-50%);
-      border: 7px solid transparent;
-      border-top-color: var(--chalk);
     }
 
     .badge:hover .badge-tip {
       opacity: 1;
-      transform: translateX(-50%) rotate(-3deg) scale(1);
+      transform: translateX(-50%) scale(1);
     }
 
-    /* ---------- japan map: in front of the name, behind the portrait ---------- */
-    .japan {
+    h1 {
+      font-size: clamp(2.6rem, 9vw, 4.5rem);
+      font-weight: 400;
+      letter-spacing: 0.05em;
+      line-height: 1;
+    }
+
+    .tagline {
+      font-size: clamp(1.05rem, 2.4vh, 1.3rem);
+      color: var(--chalk-dim);
+      margin-top: -0.75rem;
+    }
+
+    /* ---------- projects: fanned cards (after WikiFighters' launch cards) ---------- */
+    .projects {
+      display: flex;
+      justify-content: center;
+      gap: clamp(0.6rem, 2.5vw, 1.25rem);
+      padding-top: 0.5rem;
+    }
+
+    .project {
+      /* --off: position from the center card, sets the fan tilt + arc */
+      --abs: max(var(--off), -1 * var(--off));
+      position: relative;
+      width: clamp(96px, 26vw, 160px);
+      aspect-ratio: 3 / 4;
+      border-radius: 18px;
+      overflow: hidden;
+      color: var(--chalk);
+      text-decoration: none;
+      text-align: left;
+      box-shadow: 0 16px 30px rgba(0, 0, 0, 0.45);
+      rotate: calc(var(--off) * 4deg);
+      translate: 0 calc(var(--abs) * 12px);
+      transition: transform 0.3s var(--spring), rotate 0.3s var(--spring), box-shadow 0.3s;
+    }
+
+    /* chalk bevel on top of everything */
+    .project::after {
+      content: "";
       position: absolute;
-      z-index: 2;
-      left: 50%;
-      top: 50%;
-      width: clamp(180px, 32vh, 300px);
-      transform: translate(-8%, -55%) rotate(6deg);
-      animation: floaty 6.5s ease-in-out infinite;
-      animation-delay: -2.5s;
+      inset: 0;
+      border-radius: inherit;
+      box-shadow: inset 0 0 0 2px var(--chalk-dim), inset 0 1px 0 var(--chalk);
       pointer-events: none;
     }
 
-    .japan img {
-      display: block;
-      width: 100%;
-      height: auto;
-      opacity: 0.99;
-    }
-
-    .tokyo-label {
-      position: absolute;
-      left: 70%;
-      top: 50%;
-      transform: rotate(-5deg);
-      color: #ff5a5a;
-      font-size: clamp(0.95rem, 2.2vh, 1.25rem);
-      white-space: nowrap;
-    }
-
-    @keyframes morph {
-      0%   { border-radius: 42% 58% 55% 45% / 52% 44% 56% 48%; }
-      50%  { border-radius: 55% 45% 42% 58% / 44% 55% 45% 56%; }
-      100% { border-radius: 48% 52% 58% 42% / 56% 48% 52% 44%; }
-    }
-
-    /* ---------- tagline ---------- */
-    .tagline {
-      font-size: clamp(1.05rem, 2.4vh, 1.4rem);
-      color: var(--chalk-dim);
-      transform: rotate(-1deg);
-      animation: floaty 8s ease-in-out infinite;
-      animation-delay: -2s;
-      text-align: center;
-    }
-
-    /* ---------- project blobs ---------- */
-    .cards {
-      display: flex;
-      gap: clamp(1rem, 4vw, 2.5rem);
-      flex-wrap: wrap;
-      justify-content: center;
-    }
-
-    .card {
-      position: relative;
-      width: clamp(120px, 18vh, 170px);
-      height: clamp(120px, 18vh, 170px);
-      display: block;
-      overflow: hidden;
-      border: 3px solid var(--chalk);
-      text-decoration: none;
-      color: var(--chalk);
-      animation: floaty 6s ease-in-out infinite;
-      transition: transform 0.25s ease;
-    }
-    .card:nth-child(1) { border-radius: 55% 45% 48% 52% / 46% 54% 46% 54%; transform: rotate(-2.5deg); animation-delay: -1s; }
-    .card:nth-child(2) { border-radius: 44% 56% 55% 45% / 55% 45% 55% 45%; transform: rotate(1.5deg);  animation-delay: -3.5s; }
-    .card:nth-child(3) { border-radius: 52% 48% 42% 58% / 48% 56% 44% 52%; transform: rotate(-1deg);   animation-delay: -5s; }
-
-    .card img {
+    .project img {
       position: absolute;
       inset: 0;
       width: 100%;
       height: 100%;
       object-fit: cover;
-      transition: transform 0.35s ease, filter 0.35s ease;
+      transition: transform 0.5s var(--spring), filter 0.3s;
     }
 
-    .card-label {
+    /* bottom fade for the title, plus a light sweep on hover */
+    .project::before {
+      content: "";
       position: absolute;
       inset: 0;
-      display: grid;
-      place-items: center;
-      text-align: center;
-      padding: 0.8rem;
-      background: rgba(20, 28, 24, 0.65);
-      opacity: 0;
-      transition: opacity 0.3s ease;
+      z-index: 1;
+      background:
+        linear-gradient(105deg, transparent 35%, rgba(255, 255, 255, 0.1) 50%, transparent 65%) -200% 0 / 200% 100% no-repeat,
+        linear-gradient(transparent 45%, rgba(0, 0, 0, 0.85));
+      transition: background-position 0s;
     }
 
-    .card-label h3 {
-      font-size: clamp(1rem, 2.2vh, 1.3rem);
+    .project-info {
+      position: absolute;
+      left: 0.75rem;
+      right: 0.75rem;
+      bottom: 0.7rem;
+      z-index: 2;
+      line-height: 1.1;
+    }
+
+    .project-info h3 {
+      font-size: clamp(0.95rem, 3vw, 1.2rem);
       font-weight: 400;
+      text-shadow: 0 2px 6px #000;
     }
 
-    .card:hover {
-      animation-play-state: paused;
-      transform: rotate(0deg) translateY(-8px) scale(1.06);
+    .project-info p {
+      font-size: 0.8rem;
+      color: var(--chalk-dim);
+      max-height: 0;
+      opacity: 0;
+      transition: max-height 0.25s, opacity 0.25s;
     }
 
-    .card:hover img {
-      transform: scale(1.1);
-      filter: blur(1px);
+    .project:hover,
+    .project:focus-visible {
+      z-index: 1;
+      rotate: 0deg;
+      transform: translateY(-10px) scale(1.06);
+      box-shadow: 0 26px 44px rgba(0, 0, 0, 0.6);
+      outline: none;
     }
 
-    .card:hover .card-label,
-    .card:focus-visible .card-label {
-      opacity: 1;
+    .project:hover::before,
+    .project:focus-visible::before {
+      background-position: 200% 0, 0 0;
+      transition: background-position 1s ease-out;
     }
 
-    /* ---------- social links ---------- */
+    .project:hover img,
+    .project:focus-visible img { transform: scale(1.08); filter: brightness(1.12); }
+
+    .project:hover p,
+    .project:focus-visible p { max-height: 2.4em; opacity: 1; }
+
+    /* touch screens: no hover, so always show the descriptor */
+    @media (hover: none) {
+      .project-info p { max-height: 2.4em; opacity: 1; }
+    }
+
+    /* ---------- socials ---------- */
     .socials {
       display: flex;
-      gap: 1.2rem;
-      animation: floaty 7s ease-in-out infinite;
-      animation-delay: -4s;
+      gap: 1.5rem;
     }
 
     .socials a {
-      display: grid;
-      place-items: center;
-      width: 44px;
-      height: 44px;
-      border: 3px solid var(--chalk);
-      border-radius: 50%;
-      background: transparent;
-      color: var(--chalk);
-      transition: transform 0.2s ease, background 0.2s ease, color 0.2s ease;
+      color: var(--chalk-dim);
+      transition: color 0.2s, transform 0.3s var(--spring);
     }
 
-    .socials a:hover {
-      transform: translateY(-4px) rotate(-6deg);
-      background: var(--chalk);
-      color: var(--board);
+    .socials a:hover,
+    .socials a:focus-visible {
+      color: var(--chalk);
+      transform: translateY(-3px) rotate(-8deg);
     }
 
     .socials svg {
-      width: 22px;
-      height: 22px;
+      display: block;
+      width: 24px;
+      height: 24px;
       fill: currentColor;
     }
 
-    /* ---------- shared float animation ---------- */
-    @keyframes floaty {
-      0%, 100% { translate: 0 0; }
-      50%      { translate: 0 -10px; }
+    @keyframes rise {
+      from { opacity: 0; translate: 0 16px; }
+    }
+
+    @keyframes spin {
+      to { rotate: 1turn; }
+    }
+
+    @keyframes morph {
+      50%  { border-radius: 55% 45% 42% 58% / 44% 55% 45% 56%; }
+      100% { border-radius: 48% 52% 58% 42% / 56% 48% 52% 44%; }
     }
 
     @media (prefers-reduced-motion: reduce) {
-      *, *::before, *::after { animation: none !important; }
-    }
-
-    /* keep everything on one screen on short/small viewports */
-    @media (max-height: 640px), (max-width: 600px) {
-      .cards { gap: 0.8rem; }
-      .card { width: clamp(90px, 24vw, 120px); height: clamp(90px, 24vw, 120px); }
-    }
-
-    /* ---------- mobile layout ---------- */
-    @media (max-width: 600px) {
-      body {
-        justify-content: space-evenly;
-        gap: 0.5rem;
-      }
-
-      .tagline {
-        margin-top: 5rem;
-      }
-
-      /* name pinned on top like a header */
-      .site-name {
-        position: fixed;
-        top: max(3rem, env(safe-area-inset-top));
-        left: 50%;
-        transform: translateX(-50%) rotate(-2deg);
-        font-size: clamp(2.6rem, 13vw, 3.6rem);
-      }
-
-      .hero {
-        margin-top: clamp(3.5rem, 12vh, 5rem);
-      }
-
-      /* portrait back to center */
-      .blob {
-        transform: scale(1.2);
-        width: clamp(160px, 48vw, 230px);
-        height: clamp(160px, 48vw, 230px);
-      }
-
-      /* japan map moved way lower */
-      .japan {
-        position: fixed;
-        left: auto;
-        top: auto;
-        right: 0%;
-        top: 25%;
-        width: clamp(190px, 58vw, 260px);
-        transform: rotate(8deg);
-        opacity: 0.85;
-      }
-
-      /* label centered under the pin */
-      .tokyo-label {
-        left: 59%;
-        top: 63%;
-        transform: translateX(-50%) rotate(-5deg);
-      }
+      *, *::before, *::after { animation: none !important; transition: none !important; }
     }
   </style>
 </head>
 <body>
-  <!-- confetti dots -->
-  <span class="dot">✦</span>
-  <span class="dot">✦</span>
-  <span class="dot">✦</span>
-  <span class="dot">✦</span>
-  <span class="dot">✦</span>
+  <div class="portrait" style="--i: 0">
+    <img src="img/portrait.png" alt="Portrait of Val" />
+    <span class="badge">
+      <img src="img/emerald_badge.png" alt="Emerald badge" />
+      <span class="badge-tip">LET'S GO KC!</span>
+    </span>
+  </div>
 
-  <!-- name + blob portrait -->
-  <header class="hero">
-    <h1 class="site-name">PAFAN.DEV</h1>
-    <!-- japan map -->
-    <div class="japan" aria-hidden="true">
-      <img src="img/japan_map.png" alt="" />
-      <span class="tokyo-label">Im in tokyo!</span>
-    </div>
-    <div class="blob">
-      <img class="blob-img" src="img/portrait.png" alt="Portrait of Pafan" />
-      <span class="badge">
-        <img src="img/emerald_badge.png" alt="Emerald badge" />
-        <span class="badge-tip">LET'S GO KC!</span>
-      </span>
-    </div>
-  </header>
+  <h1 style="--i: 1">PAFAN.DEV</h1>
+  <p class="tagline" style="--i: 2">I'm Val. I build games and apps from Tokyo.</p>
 
-  <p class="tagline">my name is <strong>Val</strong> and I build games and apps ✦</p>
-
-  <!-- project blobs (placeholders) -->
-  <main class="cards">
-    <a class="card" href="https://store.steampowered.com/app/4022740/La_Pizza_Del_Gatto/">
-      <img src="img/lpdg.png" alt="La Pizza Del Gatto cover" />
-      <span class="card-label"><h3>La Pizza Del Gatto 🍕</h3></span>
+  <main class="projects" style="--i: 3">
+    <a class="project" style="--off: -1" href="https://store.steampowered.com/app/4022740/La_Pizza_Del_Gatto/">
+      <img src="img/lpdg.png" alt="" />
+      <span class="project-info"><h3>La Pizza Del Gatto</h3><p>on Steam</p></span>
     </a>
-    <a class="card" href="https://meowarts.com/">
-      <img src="img/meowapps.png" alt="Best company in the world cover" />
-      <span class="card-label"><h3>Best company in the world 🩵</h3></span>
+    <a class="project" style="--off: 0" href="https://wikifighters.com/">
+      <img src="img/wf.png" alt="" />
+      <span class="project-info"><h3>WikiFighters</h3><p>wikipedia race game</p></span>
     </a>
-    <a class="card" href="https://coguessr.pafan.dev/">
-      <img src="img/cg.png" alt="Geo Guessing Game for streamers cover" />
-      <span class="card-label"><h3>Geo Guessing Game for streamers 📍</h3></span>
+    <a class="project" style="--off: 1" href="https://meowarts.com/">
+      <img src="img/meowarts.svg" alt="" />
+      <span class="project-info"><h3>Meow Arts</h3><p>best company in the world</p></span>
     </a>
   </main>
 
-  <!-- social links -->
-  <footer class="socials">
+  <footer class="socials" style="--i: 4">
     <a href="https://github.com/valdesu" aria-label="GitHub" title="GitHub">
       <svg viewBox="0 0 16 16" aria-hidden="true"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27s1.36.09 2 .27c1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.01 8.01 0 0 0 16 8c0-4.42-3.58-8-8-8Z"/></svg>
     </a>
